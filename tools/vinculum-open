@@ -1,0 +1,45 @@
+#!/bin/sh
+# vinculum-open - walk the family ladder and exec the cheapest browser that can
+# handle this URL. See shared/vinculum/handoff-protocol.md.
+set -eu
+
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/vinculum/config.json"
+LADDER="volumen sorex nodus aetheris"
+NEEDS=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --needs) NEEDS="$NEEDS $2"; shift 2 ;;
+    --ladder) LADDER="$2"; shift 2 ;;
+    --help)
+      cat <<'EOF'
+usage: vinculum-open [--needs images|js|forms|text-only] URL
+       vinculum-open --caps <name>
+EOF
+      exit 0 ;;
+    *) URL="$1"; shift ;;
+  esac
+done
+
+[ -n "${URL:-}" ] || { echo "usage: vinculum-open URL" >&2; exit 64; }
+
+for tier in $LADDER; do
+  if command -v "$tier" >/dev/null 2>&1; then
+    case "$NEEDS" in
+      *js*)      [ "$tier" = "aetheris" ] || continue ;;
+      *images*)  case "$tier" in volumen) continue ;; esac ;;
+      *text-only*) case "$tier" in volumen) ;; *) continue ;; esac ;;
+    esac
+    if [ "${VINCULUM_VERBOSE:-0}" = "1" ]; then
+      echo "$tier: taking $URL (needs:$NEEDS)" >&2
+    fi
+    "$tier" "$URL"
+    rc=$?
+    # 75 means "rendered, but capability-limited" - try the next tier.
+    if [ "$rc" -eq 75 ]; then continue; fi
+    exit "$rc"
+  fi
+done
+
+echo "vinculum-open: no browser on the ladder can open this (needs:$NEEDS)" >&2
+exit 69

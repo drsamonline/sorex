@@ -49,3 +49,10 @@ tags
 /test/shapes
 /test/trie
 /test/unicode-test
+
+# ---- Sorex additions ----
+PERFORMANCE.md.local
+/build-*/
+*.dwo
+compile_commands.json
+.tags
