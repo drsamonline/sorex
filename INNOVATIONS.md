@@ -230,3 +230,27 @@ three and reports the binary size against the 1.4 MB budget.
 and a run inside an empty Alpine container.
 
 **Risk.** Low. Unglamorous, and it is what makes the project usable.
+
+## Prior art in this tree
+
+Every item below already has a home upstream. Read it before designing the
+replacement — the shape is usually right and only the policy is new.
+
+| Innovation | Where upstream already does part of this |
+| --- | --- |
+| I1 memory ceiling | `src/cache.c` (the caches that grow), `src/bw.c` (per-tab state) |
+| I2 tab suspension | `src/bw.c` (the widget tree a tab owns) |
+| I3 control socket as API | `src/dilloc.c` (client), `src/actions.c` (the actions it drives) |
+| I4 text-first paint | `lout/` (layout produces the box tree before `dw/` draws it) |
+| I5 connection reuse | `dpid/`, `dpi/http.c` (the daemon already owns the sockets) |
+| I6 HTTP/2 | `dpi/http.c`, `dpip/` (the wire protocol to extend) |
+| I7 site shims as data | `src/css.cc`, `src/cssparser.cc` (the CSS path the shims feed) |
+| I8 vertical tabs | `dw/` (the widget layer) |
+| I9 command palette | `src/actions.c`, `src/uicmd.cc` (the existing action table) |
+| I10 arena allocator | `lout/` (box allocation), `dlib/` (the malloc wrappers to keep) |
+| I11 hardened decoders | `dpi/` (already a separate process from the UI) |
+| I12 static builds | `configure.ac` (the flags that already exist) |
+
+Two boundaries upstream draws, and this fork keeps: the network lives in `dpid`
+with `dpi/` plugins, and layout (`lout/`) is separate from widgets (`dw/`). A change
+that crosses either needs a reason in `DESIGN.md` first.
