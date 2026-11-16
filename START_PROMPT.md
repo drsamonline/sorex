@@ -14,6 +14,10 @@ Aetheris family; Sorex is tier 2.
 
 In this order, and do not skip:
 
+0. `docs/UPSTREAM-FIRST.md` - this tree is a fork; read the vendored source for the
+   feature before designing it, and read Ladybird's `Libraries/LibWeb` for anything
+   interaction-shaped (focus, events, style invalidation).
+
 1. `FAMILY.md` - the four tiers, the Vinculum contract, and the licence firewall.
 2. `SOURCES.md` - the exact upstream commit this tree is derived from.
 3. `PLAN.md` - mission, non-goals, workstreams, success criteria.
